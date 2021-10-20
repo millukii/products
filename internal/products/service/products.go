@@ -4,6 +4,7 @@ import (
 	"api-products/internal/products/models"
 	"api-products/internal/products/repository"
 	"context"
+	"fmt"
 	"log"
 )
 
@@ -62,6 +63,7 @@ func (s service) 	UpdateProductBySKU(ctx context.Context, sku string, product *m
 func (s service) 	NewProduct(ctx context.Context, product *models.Product) (*models.Product, error){
 	product, err := s.repo.Add(ctx,product)
 	if err != nil {
+		fmt.Println("Error service NewProduct ", err)
 		return nil, err
 	}
 	return product, nil

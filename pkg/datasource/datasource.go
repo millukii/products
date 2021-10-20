@@ -63,7 +63,7 @@ func (d *datasource)	DeleteDocument(query bson.M) (error){
 	if err != nil {
 		return err
 	}
-	if res == nil {
+	if res == nil || res.DeletedCount==0 {
 		return errors.New("could not delete document")
 	}
 	fmt.Printf("%d",res.DeletedCount)
@@ -71,15 +71,18 @@ func (d *datasource)	DeleteDocument(query bson.M) (error){
 }
 func (d *datasource)	UpdateDocument(query bson.M, document interface{}) (error){
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	res, err := d.mongoDts.collection.UpdateOne(ctx, query, document)
+	update := bson.M{
+        "$set": document,
+    }
+	res, err := d.mongoDts.collection.UpdateOne(ctx, query, update )
 
 	if err != nil {
+		fmt.Printf("Error datasource Update one %s",err)
 		return err
 	}
-	if res.UpsertedID == nil || res.ModifiedCount == 0 {
+	if res.MatchedCount == 0 {
 		return errors.New("could not update document")
 	}
-	fmt.Printf("%s",res.UpsertedID)
 	return nil
 }
 

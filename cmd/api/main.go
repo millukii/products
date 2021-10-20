@@ -1,12 +1,13 @@
 package main
 
 import (
-	"api-products/internal/products/controller"
+	"api-products/internal/products/handler"
 	"api-products/internal/products/repository"
 	"api-products/internal/products/service"
 	"api-products/pkg/datasource"
 	"api-products/pkg/server"
 	"context"
+	"api-products/pkg/router"
 	"fmt"
 	"log"
 	"net/http"
@@ -28,12 +29,6 @@ func init() {
 func main() {
 
 	route := gin.Default()
-
-	g := route.Group(os.Getenv("API_URL"))
-
-	g.Use(gin.Logger())
-
-	g.Use(gin.Recovery())
 
 	//g.Use(mdw.AuthorizeJWT())
 
@@ -67,21 +62,13 @@ func main() {
 
 	}
 	productsService := service.NewProductService(productsRepository)
-	productsController := controller.NewProductsController(route, productsService)
+	productsController := handler.NewProductsController(route, productsService)
 	
-
-	route.GET("/health", productsController.Healthcheck)
-
-	g.GET("/", productsController.GetAll)
-	g.GET("/:sku", productsController.Get)
-	g.DELETE("/:sku", productsController.Delete)
-	g.PATCH("/:sku", productsController.Update)
-	g.POST("/", productsController.Create)
 
 	host := fmt.Sprintf("%s:%s", os.Getenv("HOST"), os.Getenv("PORT"))
 
 	log.Printf("SERVER DIRECTION %s", host)
-	srv := server.NewServer(route, host)
+	srv := server.NewServer(router.SetupRoutes(os.Getenv("API_URL"),route, productsController), host)
 	// Graceful server shutdown - https://github.com/gin-gonic/examples/blob/master/graceful-shutdown/graceful-shutdown/server.go
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

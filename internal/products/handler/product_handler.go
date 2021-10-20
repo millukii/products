@@ -1,8 +1,9 @@
-package controller
+package handler
 
 import (
 	"api-products/internal/products/models"
 	"api-products/internal/products/service"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -61,7 +62,7 @@ func (c *controller) 	Get(ctx *gin.Context){
 	}
 
 	if product == nil {
-		ctx.AbortWithStatusJSON(http.StatusNotFound, "No se ha encontrado informacion sobre la product group")
+		ctx.AbortWithStatusJSON(http.StatusNotFound, "Product data not found")
 		return
 	}
 	ctx.JSON(200, product)
@@ -73,6 +74,11 @@ func (c *controller) 	Delete(ctx *gin.Context){
   err := c.svc.DeleteProductBySKU(ctx, sku)
 	ctx.SetAccepted("Content-Type", "application/json")
 	if err != nil {
+		if err.Error() == "could not delete document"{
+			log.Println("Error trying to delete product ", err)
+			ctx.AbortWithStatusJSON(http.StatusNotFound, "Product doesnt exist")
+			return
+		}
 		log.Println("Error obteniendo product info ", err)
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, "Existe un problema en el servicio, contactar a mromero@gmail.com")
 		return
@@ -92,11 +98,15 @@ func (c *controller) 	Update(ctx *gin.Context){
 	product, err := c.svc.UpdateProductBySKU(ctx, sku, body)
 	ctx.SetAccepted("Content-Type", "application/json")
 	if err != nil {
+		if err.Error() == "could not update document"{
+			log.Println("Error trying to update product ", err)
+			ctx.AbortWithStatusJSON(http.StatusNotFound, "Product doesnt exist")
+			return
+		}
 		log.Println("Error obteniendo product info ", err)
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, "Existe un problema en el servicio, contactar a mromero@gmail.com")
 		return
 	}
-
 	if product == nil {
 		ctx.AbortWithStatusJSON(http.StatusNotFound, "Product doesnt exist")
 		return
@@ -105,18 +115,20 @@ func (c *controller) 	Update(ctx *gin.Context){
 }
 func (c *controller) 	Create(ctx *gin.Context){
 
-
+	fmt.Println(ctx.Request.Header)
 	body :=&models.Product{}
-	if err := ctx.ShouldBindBodyWith(&body,binding.JSON);err!=nil{
-		ctx.AbortWithError(http.StatusBadRequest,err)
+ 	if err := ctx.ShouldBindBodyWith(&body,binding.JSON);err!=nil{
+
+		log.Println("Error creating product ", err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest,"Data required ")
 		return
-	}
+	} 
 	log.Println("[controller /internal/products/productcontroller] Create", " data: ", body)
 
 	product, err := c.svc.NewProduct(ctx, body)
 	ctx.SetAccepted("Content-Type", "application/json")
 	if err != nil {
-		log.Println("Error obteniendo product info ", err)
+		log.Println("Error creating new product ", err)
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, "Existe un problema en el servicio, contactar a mromero@gmail.com")
 		return
 	}

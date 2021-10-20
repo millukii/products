@@ -37,7 +37,9 @@ func (r repository) 	GetBy(ctx context.Context, column, value string) (*models.P
 	if err != nil {
 		return nil, err
 	}
-
+	if docs == nil {
+		return nil, nil
+	}
 	raw, _ := json.Marshal(docs)
 	json.Unmarshal(raw, &data)
 
