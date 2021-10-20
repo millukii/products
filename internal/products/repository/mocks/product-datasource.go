@@ -9,34 +9,28 @@ import (
 )
 
 type FakeDatasource struct {
+	MockExecuteQuery func(query bson.M) ([]bson.M, error)
+	MockExecuteAggregate func(stages mongo.Pipeline) ([]bson.M, error)
+	MockInsertDocument func(document interface{}) error
+	MockDeleteDocument func(query bson.M) error
+	MockUpdateDocument func(query bson.M, document interface{}) error
 }
 
 func (f FakeDatasource) ExecuteQuery(query bson.M) ([]bson.M, error) {
-	return []bson.M{
-		bson.M{"sku": "1", "name": "rasho laser", "brand": "monster", "size": "M", "price": 200, "principalImage": "https://i.picsum.photos/id/1/5616/3744.jpg?hmac=kKHwwU8s46oNettHKwJ24qOlIAsWN9d2TtsXDoCWWsQ",
-			"otherImages": bson.A{"https://i.picsum.photos/id/1/5616/3744.jpg?hmac=kKHwwU8s46oNettHKwJ24qOlIAsWN9d2TtsXDoCWWsQ", "https://i.picsum.photos/id/1/5616/3744.jpg?hmac=kKHwwU8s46oNettHKwJ24qOlIAsWN9d2TtsXDoCWWsQ"},
-		},
-	}, nil
+	return f.MockExecuteQuery(query)
 }
 
 func (f FakeDatasource) ExecuteAggregate(stages mongo.Pipeline) ([]bson.M, error) {
-	return []bson.M{
-		bson.M{"sku": "1", "name": "rasho laser", "brand": "monster", "size": "M", "price": 200, "principalImage": "https://i.picsum.photos/id/1/5616/3744.jpg?hmac=kKHwwU8s46oNettHKwJ24qOlIAsWN9d2TtsXDoCWWsQ",
-			"otherImages": bson.A{"https://i.picsum.photos/id/1/5616/3744.jpg?hmac=kKHwwU8s46oNettHKwJ24qOlIAsWN9d2TtsXDoCWWsQ", "https://i.picsum.photos/id/1/5616/3744.jpg?hmac=kKHwwU8s46oNettHKwJ24qOlIAsWN9d2TtsXDoCWWsQ"},
-		},
-		bson.M{"sku": "2", "name": "rasho laser2", "brand": "acme", "size": "XXL", "price": 900, "principalImage": "https://i.picsum.photos/id/1/5616/3744.jpg?hmac=kKHwwU8s46oNettHKwJ24qOlIAsWN9d2TtsXDoCWWsQ",
-			"otherImages": bson.A{"https://i.picsum.photos/id/1/5616/3744.jpg?hmac=kKHwwU8s46oNettHKwJ24qOlIAsWN9d2TtsXDoCWWsQ", "https://i.picsum.photos/id/1/5616/3744.jpg?hmac=kKHwwU8s46oNettHKwJ24qOlIAsWN9d2TtsXDoCWWsQ"},
-		},
-	}, nil
+	return f.MockExecuteAggregate(stages)
 }
 func (f FakeDatasource) InsertDocument(document interface{}) error {
-	return nil
+	return f.MockInsertDocument(document)
 }
 func (f FakeDatasource) DeleteDocument(query bson.M) error {
-	return nil
+	return f.MockDeleteDocument(query)
 }
 func (f FakeDatasource) UpdateDocument(query bson.M, document interface{}) error {
-	return nil
+	return f.MockUpdateDocument(query,document)
 }
 
 

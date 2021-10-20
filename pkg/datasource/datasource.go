@@ -45,6 +45,7 @@ func NewDatasource(mongoDts MongoDatasource) (Datasource, error) {
 
 func (d *datasource)	InsertDocument(document interface{}) (error){
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	
 	res, err := d.mongoDts.collection.InsertOne(ctx, document)
 
 	if err != nil {

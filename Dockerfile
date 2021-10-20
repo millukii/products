@@ -15,8 +15,8 @@ COPY . .
 # Build the Go app
 RUN go build -o main cmd/api/main.go
 
-# Expose port 5000 to the outside world
-EXPOSE 5000
+# Expose port 8989 to the outside world
+EXPOSE 8989
 
 # Command to run the executable
 CMD ["./main"]

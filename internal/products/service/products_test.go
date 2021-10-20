@@ -67,7 +67,6 @@ func respMockGetAll(ctx context.Context) ([]*models.Product, error){
 	var products []*models.Product
 
 	products = append(products, &models.Product{
-			Id: "1",
 			SKU: "3",
 			Name: "jojo",
 			Brand: "jojo2",

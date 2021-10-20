@@ -5,6 +5,7 @@ import (
 	"api-products/pkg/datasource"
 	"context"
 	"encoding/json"
+	"errors"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -52,7 +53,10 @@ func (r repository) 		GetAll(ctx context.Context) ([]*models.Product, error){
 	if err != nil {
 		return nil, err
 	}
-
+	
+	if docs == nil {
+		return nil, nil
+	}
 	raw, _ := json.Marshal(docs)
 	//log.Printf("Raw from mongo %s", raw)
 	json.Unmarshal(raw, &data)
@@ -62,6 +66,10 @@ func (r repository) 		GetAll(ctx context.Context) ([]*models.Product, error){
 }
 func (r repository) 		Add(ctx context.Context, product *models.Product) (*models.Product, error){
 
+	duplicated, _ :=	r.GetBy(ctx,"sku", product.SKU)
+	if duplicated != nil{
+		return nil, errors.New("Duplicated sku")
+	}
 	err :=	r.datasource.InsertDocument(product)
 	if err != nil {
 		return nil, err

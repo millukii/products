@@ -114,7 +114,7 @@ func (c *controller) 	Update(ctx *gin.Context){
 	ctx.JSON(200, product)
 }
 func (c *controller) 	Create(ctx *gin.Context){
-
+	ctx.SetAccepted("Content-Type", "application/json")
 	fmt.Println(ctx.Request.Header)
 	body :=&models.Product{}
  	if err := ctx.ShouldBindBodyWith(&body,binding.JSON);err!=nil{
@@ -125,16 +125,22 @@ func (c *controller) 	Create(ctx *gin.Context){
 	} 
 	log.Println("[controller /internal/products/productcontroller] Create", " data: ", body)
 
-	product, err := c.svc.NewProduct(ctx, body)
-	ctx.SetAccepted("Content-Type", "application/json")
+	err := body.Validation()
 	if err != nil {
-		log.Println("Error creating new product ", err)
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, "Existe un problema en el servicio, contactar a mromero@gmail.com")
+		log.Println("body validation error: ", err)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Product attributes must be valid":err.Error()} )
 		return
 	}
+	product, err := c.svc.NewProduct(ctx, body)
 
-	if product == nil {
-		ctx.AbortWithStatusJSON(http.StatusNotFound, "Product doesnt exist")
+	if err != nil {
+	if err.Error() == "Duplicated sku"{
+			log.Println("Error trying to update product ", err)
+			ctx.AbortWithStatusJSON(http.StatusConflict, "Product exist")
+			return
+		}
+		log.Println("Error creating new product ", err)
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, "Existe un problema en el servicio, contactar a mromero@gmail.com")
 		return
 	}
 	ctx.JSON(200, product)

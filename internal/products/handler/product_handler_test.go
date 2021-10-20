@@ -58,13 +58,13 @@ func TestController(t *testing.T) {
         router := gin.Default()
 				svcMock.MockGetBySKU =  func(ctx context.Context, sku string) (*models.Product, error){
 					return &models.Product{
-						SKU: "1",
+						SKU: "FAL-11100000",
 						Name: "joj",
 						Brand: "jaja",
 						Size: "1", 
 						Price: 1.2,
-						PrincipalImage: "",
-						OtherImages: []string{"",""},
+						PrincipalImage: "https://unsplash.com/photos/yC-Yzbqy7PY",
+						OtherImages: []string{"https://unsplash.com/photos/yC-Yzbqy7PY","https://unsplash.com/photos/yC-Yzbqy7PY"},
 					},nil
 				}
         controller := handler.NewProductsController(router,svcMock)
@@ -98,13 +98,13 @@ func TestController(t *testing.T) {
 			t.Run("200", func(t *testing.T) {
 				 				svcMock.MockNewProduct =  func(ctx context.Context, product *models.Product) (*models.Product, error){
 					return &models.Product{ 	
-											SKU: "1",
+											SKU: "FAL-11100000",
 						Name: "joj",
 						Brand: "jaja",
  						Size: "1", 
 						Price: 1.2,
- 						PrincipalImage: "",
- 						OtherImages: []string{"",""},
+ 						PrincipalImage: "https://unsplash.com/photos/yC-Yzbqy7PY",
+ 						OtherImages: []string{"https://unsplash.com/photos/yC-Yzbqy7PY","https://unsplash.com/photos/yC-Yzbqy7PY"},
  					},nil
  				}
 				// initialize the router
@@ -115,13 +115,13 @@ func TestController(t *testing.T) {
 				unitTest.SetRouter(r)
 				resp := &models.Product{}
 				err := unitTest.TestHandlerUnMarshalResp("POST", "/", utils.JSON, &models.Product{
-						SKU: "1",
+						SKU: "FAL-11100000",
 						Name: "joj",
  						Brand: "jaja",
  						Size: "1", 
  						Price: 1.2,
- 						PrincipalImage: "url1",
- 						OtherImages: []string{"url2","url23"},
+ 						PrincipalImage: "https://unsplash.com/photos/yC-Yzbqy7PY",
+ 						OtherImages: []string{"https://unsplash.com/photos/yC-Yzbqy7PY","https://unsplash.com/photos/yC-Yzbqy7PY"},
  						}, &resp)
 					if err != nil {
 						t.Errorf("TestAddProduct: %v\n", err)
@@ -142,13 +142,13 @@ func TestController(t *testing.T) {
 				unitTest.SetRouter(r)
 				resp := &models.Product{}
 				err := unitTest.TestHandlerUnMarshalResp("POST", "/", utils.JSON, &models.Product{
-						SKU: "1",
+						SKU: "FAL-1000001",
 						Name: "joj",
  						Brand: "jaja",
  						Size: "1", 
  						Price: 1.2,
- 						PrincipalImage: "url1",
- 						OtherImages: []string{"url2","url23"},
+ 						PrincipalImage: "https://unsplash.com/photos/yC-Yzbqy7PY",
+ 						OtherImages: []string{"https://unsplash.com/photos/yC-Yzbqy7PY","https://unsplash.com/photos/yC-Yzbqy7PY"},
  						}, &resp)
 					assert.Error(t,err)
 			})
@@ -164,13 +164,13 @@ func TestController(t *testing.T) {
 				unitTest.SetRouter(r)
 				resp := &models.Product{}
 				err := unitTest.TestHandlerUnMarshalResp("POST", "/", utils.JSON, &models.Product{
-						SKU: "1",
+						SKU: "FAL-11100000",
 						Name: "joj",
  						Brand: "jaja",
  						Size: "1", 
  						Price: 1.2,
- 						PrincipalImage: "url1",
- 						OtherImages: []string{"url2","url23"},
+ 						PrincipalImage: "https://unsplash.com/photos/yC-Yzbqy7PY",
+ 						OtherImages: []string{"https://unsplash.com/photos/yC-Yzbqy7PY","https://unsplash.com/photos/yC-Yzbqy7PY"},
  						}, &resp)
 					assert.Error(t,err)
 			})
